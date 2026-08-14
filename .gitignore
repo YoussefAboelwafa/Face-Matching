@@ -1,5 +1,5 @@
 .vscode
 dataset
 DATASET.md
-AGENTS.md
 __pycache__/
+checkpoints

@@ -10,4 +10,6 @@ CHECKPOINTS_PATH = "/scratch/y.aboelwafa/Face-Matching/checkpoints"
 
 TRAIN_EMBEDDINGS_PATH = "/scratch/y.aboelwafa/Face-Matching/train_embeddings.pkl"
 
+TRAIN_EMBEDDINGS_AUG_PATH = "/scratch/y.aboelwafa/Face-Matching/train_embeddings_aug.pkl"
+
 VAL_EMBEDDINGS_PATH = "/scratch/y.aboelwafa/Face-Matching/val_embeddings.pkl"

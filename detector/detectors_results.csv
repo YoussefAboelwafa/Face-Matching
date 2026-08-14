@@ -1,0 +1,9 @@
+Detector,Accuracy
+retinaface,1.0000
+mtcnn,1.0000
+yolov8n,1.0000
+yolov11n,1.0000
+opencv,1.0000
+dlib,1.0000
+yunet,1.0000
+centerface,0.9978

@@ -5,8 +5,9 @@ from pathlib import Path
 from tqdm import tqdm
 import torch
 import tensorflow as tf
-
+os.environ["TF_USE_LEGACY_KERAS"] = "1"
 sys.path.insert(0, str(Path.cwd().parent))
+
 from deepface import DeepFace
 from config import TRAIN_DATASET_PATH, VAL_DATASET_PATH
 

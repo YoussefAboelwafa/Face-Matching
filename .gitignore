@@ -1,5 +1,8 @@
 .vscode
-dataset
-DATASET.md
 __pycache__/
+dataset
 checkpoints
+*.log
+*.pkl
+*.md
+!README.md

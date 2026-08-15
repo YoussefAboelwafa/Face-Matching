@@ -6,7 +6,6 @@ sys.path.insert(0, str(Path.cwd().parent))
 import argparse
 import torch
 import numpy as np
-from sklearn.metrics import confusion_matrix, classification_report
 from utils import load_embeddings
 from config import VAL_EMBEDDINGS_PATH, CHECKPOINTS_PATH
 from model import AgeModel
@@ -28,7 +27,7 @@ def evaluate_model(model, val_data, device):
     true_ages = []
 
     with torch.no_grad():
-        for embedding, age in val_data:
+        for embedding, age in tqdm(val_data, desc="Evaluating"):
             embedding = torch.tensor(embedding, dtype=torch.float32).unsqueeze(0).to(device)
             class_output, reg_output = model(embedding)
             predicted_age = class_output.argmax(dim=1).item()

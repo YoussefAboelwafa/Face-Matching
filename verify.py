@@ -25,10 +25,8 @@ def cosine_distance(emb1, emb2):
 def predict_age(embedding, model):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     emb_tensor = torch.tensor(embedding, dtype=torch.float32).unsqueeze(0).to(device)
-    model.eval()
-    with torch.no_grad():
-        class_output, _ = model(emb_tensor)
-        predicted_age = class_output.argmax(dim=1).item()
+    class_output, _ = model(emb_tensor)
+    predicted_age = class_output.argmax(dim=1).item()
     return predicted_age
 
 def load_model(checkpoint_name):

@@ -1,18 +1,23 @@
 import os
+os.environ["TF_USE_LEGACY_KERAS"] = "1"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+os.environ["COMET_LOG_CONSOLE"] = "false"
+
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path.cwd().parent))
 
 import torch
-import torch.nn as nn
 from torch.utils.data import DataLoader
 from utils import load_embeddings
-from config import TRAIN_EMBEDDINGS_PATH, VAL_EMBEDDINGS_PATH, CHECKPOINTS_PATH
+from config import TRAIN_EMBEDDINGS_AUG_PATH, VAL_EMBEDDINGS_PATH, CHECKPOINTS_PATH
 from model import AgeModel, OrdinalLoss
 from data import EmbeddingDataset
 from comet_ml import Experiment
 import optuna
+from optuna.storages import JournalStorage, JournalFileStorage
 
 
 GPUS = [0, 1, 2, 3]
@@ -22,8 +27,8 @@ def objective(trial):
     gpu_id = GPUS[trial.number % len(GPUS)]
     device = torch.device(f"cuda:{gpu_id}")
     
-    trial_name = f"trial_{trial.number}"
-    trial_checkpoint_dir = os.path.join(CHECKPOINTS_PATH, "TUNE", trial_name)
+    trial_name = f"aug_trial_{trial.number}"
+    trial_checkpoint_dir = os.path.join(CHECKPOINTS_PATH, "TUNE_AUG", trial_name)
     os.makedirs(trial_checkpoint_dir, exist_ok=True)
     
     experiment = Experiment(
@@ -51,7 +56,7 @@ def objective(trial):
     
     print(f"[{trial_name}] Using device: {device}")
     print(f"[{trial_name}] Loading training embeddings...")
-    train_data = load_embeddings(TRAIN_EMBEDDINGS_PATH)
+    train_data = load_embeddings(TRAIN_EMBEDDINGS_AUG_PATH)
     train_dataset = EmbeddingDataset(train_data)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     
@@ -188,10 +193,12 @@ def objective(trial):
 
 
 if __name__ == "__main__":
+    storage = JournalStorage(JournalFileStorage("tuning.log"))
+    
     study = optuna.create_study(
         direction="maximize",
         study_name="age_model_hyperparameter_tuning",
-        storage="sqlite:///tuning.db",
+        storage=storage,
         load_if_exists=True,
     )
     

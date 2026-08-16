@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path.cwd().parent))
 import torch
 from torch.utils.data import DataLoader
 from utils import load_embeddings
-from config import TRAIN_EMBEDDINGS_AUG_PATH, VAL_EMBEDDINGS_PATH, CHECKPOINTS_PATH
+from config import TRAIN_EMBEDDINGS_PATH, VAL_EMBEDDINGS_PATH, CHECKPOINTS_PATH
 from model import AgeModel, OrdinalLoss
 from data import EmbeddingDataset
 from comet_ml import Experiment
@@ -27,8 +27,8 @@ def objective(trial):
     gpu_id = GPUS[trial.number % len(GPUS)]
     device = torch.device(f"cuda:{gpu_id}")
     
-    trial_name = f"aug_trial_{trial.number}"
-    trial_checkpoint_dir = os.path.join(CHECKPOINTS_PATH, "TUNE_AUG", trial_name)
+    trial_name = f"trial_{trial.number}"
+    trial_checkpoint_dir = os.path.join(CHECKPOINTS_PATH, "TUNE", trial_name)
     os.makedirs(trial_checkpoint_dir, exist_ok=True)
     
     experiment = Experiment(
@@ -56,7 +56,7 @@ def objective(trial):
     
     print(f"[{trial_name}] Using device: {device}")
     print(f"[{trial_name}] Loading training embeddings...")
-    train_data = load_embeddings(TRAIN_EMBEDDINGS_AUG_PATH)
+    train_data = load_embeddings(TRAIN_EMBEDDINGS_PATH)
     train_dataset = EmbeddingDataset(train_data)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     

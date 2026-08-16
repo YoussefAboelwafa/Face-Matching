@@ -12,7 +12,7 @@ from config import TRAIN_DATASET_PATH, TRAIN_EMBEDDINGS_AUG_PATH
 
 
 SEED = 42
-AUG_PROB = 0.5
+AUG_PROB = 0.6
 
 AUGMENTATIONS = {
     "horizontal_flip": lambda img: cv2.flip(img, 1),
@@ -34,12 +34,22 @@ def embed_dataset_with_augmentations(dataset_path, embeddings_path, seed=SEED, a
     data = []
     
     all_images = []
+    class_counts = {}
     for age in range(0, 91):
         class_path = os.path.join(dataset_path, str(age))
         if os.path.exists(class_path):
-            for img_name in os.listdir(class_path):
+            img_names = os.listdir(class_path)
+            class_counts[str(age)] = len(img_names)
+            for img_name in img_names:
                 img_path = os.path.join(class_path, img_name)
                 all_images.append((img_path, str(age)))
+
+    median_count = np.median(list(class_counts.values()))
+    minority_classes = {age for age, count in class_counts.items() if count < median_count}
+    
+    print(f"Median class count: {median_count}")
+    print(f"Minority classes (below median): {len(minority_classes)}")
+    print(f"Majority classes (at/above median): {len(class_counts) - len(minority_classes)}")
 
     pbar = tqdm(all_images, desc="Processing images")
     for img_path, age in pbar:
@@ -61,20 +71,21 @@ def embed_dataset_with_augmentations(dataset_path, embeddings_path, seed=SEED, a
             except Exception as e:
                 print(f"Could not embed original {img_path}: {e}")
 
-            for aug_name, aug_fn in AUGMENTATIONS.items():
-                if np.random.random() < aug_prob:
-                    try:
-                        augmented_img = aug_fn(img)
-                        emb = DeepFace.represent(
-                            augmented_img,
-                            model_name="Facenet512",
-                            detector_backend="retinaface",
-                            enforce_detection=False,
-                            align=True,
-                        )
-                        data.append((emb[0]["embedding"], age))
-                    except Exception as e:
-                        print(f"Could not embed {img_path} with {aug_name}: {e}")
+            if age in minority_classes:
+                for aug_name, aug_fn in AUGMENTATIONS.items():
+                    if np.random.random() < aug_prob:
+                        try:
+                            augmented_img = aug_fn(img)
+                            emb = DeepFace.represent(
+                                augmented_img,
+                                model_name="Facenet512",
+                                detector_backend="retinaface",
+                                enforce_detection=False,
+                                align=True,
+                            )
+                            data.append((emb[0]["embedding"], age))
+                        except Exception as e:
+                            print(f"Could not embed {img_path} with {aug_name}: {e}")
 
         except Exception as e:
             print(f"Could not process {img_path}: {e}")

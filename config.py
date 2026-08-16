@@ -1,5 +1,3 @@
-import torch
-
 DATASET_PATH = "/scratch/y.aboelwafa/Face-Matching/dataset"
 
 TRAIN_DATASET_PATH = "/scratch/y.aboelwafa/Face-Matching/dataset/train"

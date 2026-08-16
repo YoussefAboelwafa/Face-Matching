@@ -4,7 +4,6 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
 import argparse
-import math
 import torch
 import numpy as np
 from deepface import DeepFace

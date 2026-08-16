@@ -1,11 +1,4 @@
-import matplotlib.pyplot as plt
 import pickle as pkl
-
-
-def show_image(img):
-    plt.imshow(img)
-    plt.axis("off")
-    plt.show()
 
 
 def save_embeddings(file_path, data):

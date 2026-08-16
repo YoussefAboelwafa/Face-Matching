@@ -6,7 +6,6 @@ sys.path.insert(0, str(Path.cwd().parent))
 
 from comet_ml import Experiment
 import torch
-import torch.nn as nn
 from torch.utils.data import DataLoader
 from utils import load_embeddings
 from config import TRAIN_EMBEDDINGS_PATH, VAL_EMBEDDINGS_PATH, CHECKPOINTS_PATH

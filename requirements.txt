@@ -22,3 +22,4 @@ facenet-pytorch
 optuna
 tf-keras
 ultralytics
+hf
